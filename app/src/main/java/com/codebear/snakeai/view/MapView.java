@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.codebear.snakeai.bean.Node;
@@ -33,7 +32,7 @@ public class MapView extends View implements GameView {
     /**
      * 地图的最大行数
      */
-    private int MAX_LINE_NUM = 12;
+    private int MAX_LINE_NUM = 10;
     /**
      * 食物的画笔
      */
@@ -46,6 +45,10 @@ public class MapView extends View implements GameView {
      * 地图的画笔
      */
     private Paint boardPaint;
+    /**
+     * 文字的画笔
+     */
+    private Paint textPaint;
     /**
      * 蛇
      */
@@ -72,6 +75,7 @@ public class MapView extends View implements GameView {
         boardPaint = new Paint();
         foodPaint = new Paint();
         snakePaint = new Paint();
+        textPaint = new Paint();
 
         //初始化地图画笔
         boardPaint.setColor(0x55000000);
@@ -99,6 +103,16 @@ public class MapView extends View implements GameView {
         snakePaint.setDither(true);
         //设置为实心
         snakePaint.setStyle(Paint.Style.FILL);
+
+        //初始化蛇身画笔
+        textPaint.setColor(Color.WHITE);
+        //设置抗锯齿
+        textPaint.setAntiAlias(true);
+        //设置防抖动
+        textPaint.setDither(true);
+        //设置为实心
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setTextSize(16f);
 
         snakeBody = new ArrayList<>();
         food = new Node();
@@ -129,7 +143,6 @@ public class MapView extends View implements GameView {
         } else if (heightMode == MeasureSpec.UNSPECIFIED) {
             width = widthSize;
         }
-        Log.d("pyh", "onMeasure: width" + width + "height" + heightSize);
         //调用此方法使我们的测量结果生效
         setMeasuredDimension(width, width);
     }
@@ -202,6 +215,11 @@ public class MapView extends View implements GameView {
             if(i == snakeBody.size() - 1) {
                 canvas.drawCircle(x, y, mLineHeight / 10, foodPaint);
             }
+            //绘制数字(第几个下的子)
+            canvas.drawText(String.valueOf(i + 1),
+                    (x - 0.4f * mLineHeight),
+                    y,
+                    textPaint);
         }
     }
 

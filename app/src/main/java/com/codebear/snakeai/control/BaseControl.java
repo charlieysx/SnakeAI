@@ -50,6 +50,8 @@ public abstract class BaseControl {
      */
     protected int[][] f = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
+    protected long sleepTime = 10;
+
     public BaseControl(GameView gameView) {
         this.gameView = gameView;
         lineNum = gameView.getLineNum();
@@ -104,7 +106,7 @@ public abstract class BaseControl {
 
     protected void startMoveSnake(Node nextStep) {
         try {
-            Thread.sleep(10);
+            Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -121,6 +123,27 @@ public abstract class BaseControl {
         gameView.reDraw();
     }
 
+    protected void startMoveSnake(List<Node> nextStepList) {
+        for (Node nextStep : nextStepList) {
+            try {
+                Thread.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            realSnake.add(0, nextStep);
+            if (!food.nodeEquals(nextStep)) {
+                gameView.move(nextStep);
+                realSnake.remove(realSnake.size() - 1);
+            } else {
+                gameView.addSnakeBody(nextStep);
+                food.setXY(-1, -1);
+                getRandomFood();
+                gameView.addFood(food);
+            }
+            gameView.reDraw();
+        }
+    }
+
     /**
      * 根据传入的蛇获取对应的地图数组
      *
@@ -128,13 +151,15 @@ public abstract class BaseControl {
      * @return
      */
     protected int[][] getMap(List<Node> snakes) {
+        List<Node> nodeList = new ArrayList<>();
+        nodeList.addAll(snakes);
         int[][] map = new int[lineNum][lineNum];
         for (int i = 0; i < lineNum; ++i) {
             for (int j = 0; j < lineNum; ++j) {
                 map[i][j] = SPACE;
             }
         }
-        for (Node node : snakes) {
+        for (Node node : nodeList) {
             map[node.getX()][node.getY()] = SNAKE;
         }
         if (isInMap(food)) {
