@@ -91,6 +91,7 @@ public class GameControl3 extends BaseControl {
                 if (null != nextStep) {
                     nextStepList = new ArrayList<>();
                     nextStepList.add(nextStep);
+
                     loop = 0;
                 }
             } else {
